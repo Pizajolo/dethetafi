@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'InterFace';
+    src: local('InterFace Bold'), local('InterFace-Bold'),
+        url('InterFace-Bold.woff2') format('woff2'),
+        url('InterFace-Bold.woff') format('woff'),
+        url('InterFace-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+  }
