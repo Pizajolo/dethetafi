@@ -4,7 +4,10 @@
     <!-- Process -->
     <div class="process">
       <h2 style="font-weight: bold;">All Pools</h2>
-      <Pool :pool="pool" :tfuel="tFuelPrice"></Pool>
+      <div v-for="(pool,n) in pools" :key="n">
+        <Pool :pool="pool" :tfuel="tFuelPrice"></Pool>
+      </div>
+
 <!--      <Pool :pool="pool"></Pool>-->
     </div>
   </div>
@@ -26,20 +29,34 @@ import metaMask from "../assets/images/metamask.svg";
 import share from "../assets/images/share.svg";
 import upload from "../assets/images/upload.svg";
 import Navbar from "@/components/Navbar";
+import {ABI_FACTORY, FACTORY_ADDRESS} from "@/Config";
 export default {
   name: "SendToken",
   components: { Pool },
   data() {
     return {
       tFuelPrice: 0,
-      pool: {
-        img: "https://arweave.net/4oWnJ-MzCz87aNWy7kn36Jz5R_l7Vs_FgWkswekU5g0",
-        name: "Community/TBILL-TFuel",
-        contract: "0xb84d8b22d3d0f38723e9e0805ead0bce982260b9"
-      }
+      pools: []
     };
   },
   methods: {
+    async getData() {
+      try {
+        let provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contractFactoryObject = new ethers.Contract(
+            FACTORY_ADDRESS,
+            ABI_FACTORY,
+            provider
+        );
+        let amount = await contractFactoryObject._contractIds()
+        for(let i=1; i<=amount; i++) {
+          let contract = await contractFactoryObject.getById(i)
+          this.pools.push(contract)
+        }
+      } catch {
+        alert("Install MetaMask to see available pools")
+      }
+    }
   },
   watch: {
   },
@@ -52,6 +69,7 @@ export default {
               this.tFuelPrice = data[i].price
             }
           }
+          this.getData()
         })
   }
 };
@@ -61,7 +79,7 @@ export default {
 // send-token styles
 .send-token {
   // process styles
-  min-height: 80vh;
+  min-height: 75vh;
   display: flex;
   justify-content: center;
   align-content: center;

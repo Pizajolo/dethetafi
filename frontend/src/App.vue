@@ -5,6 +5,10 @@
     <Navbar/>
     <!-- View  -->
     <Home/>
+    <div class="footer">
+      <a href="https://github.com/Pizajolo/dethetafi/blob/master/Readme.md">Terms of service</a>
+      <a href="https://github.com/Pizajolo/dethetafi" style="padding-left: 20px">Github</a>
+    </div>
   </div>
   <!-- Container  -->
 </template>
@@ -56,5 +60,13 @@ body {
 // container styles
 .container {
   min-height: 100vh;
+}
+.footer{
+  display: flex;
+  justify-content: end;
+  margin: 0 20px;
+  a {
+    color: #888888;
+  }
 }
 </style>

@@ -46,8 +46,27 @@ const ABI_LP_POOL = [
         'function withdraw(uint256 _amount)',
         'function withdrawMultiplier(uint256 _tokenId)',
         'function withdrawMultiplierAdmin(uint256 _tokenId)'
-    ]
-;
+    ];
+
+const ABI_FACTORY = [
+        'constructor(address FeeAddress, uint256 _feeTFuel)',
+        'event CreateContract(address contractAddress, address creator, string name)',
+        'event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)',
+        'function _contractIds() view returns (uint256 _value)',
+        'function buildTBillStaking(string name, string image, address _accessToken, uint256 _accessTokenAmount, uint256 _compoundRewardBasePoints) payable',
+        'function feeAddress() view returns (address)',
+        'function feeTFuel() view returns (uint256)',
+        'function getById(uint256 id) view returns (tuple(address contractAddress, address creator, string name, string image))',
+        'function getCreator(address creator) view returns (bool isWhitelisted)',
+        'function getDeployedContracts() view returns (address[])',
+        'function getDeployedContractsByCreator(address creator) view returns (tuple(address contractAddress, address creator, string name, string image)[])',
+        'function owner() view returns (address)',
+        'function renounceOwnership()',
+        'function setFeeAddress(address FeeAddress)',
+        'function setFeeTFuel(uint256 _feeTFuel)',
+        'function transferOwnership(address newOwner)',
+        'function whitelist(address creator, bool whitelisted)'
+    ];
 
 const NETWORK_OPTIONS = {
     chainId: "0x169",
@@ -67,6 +86,7 @@ const NETWORK_OPTIONS = {
 
 const MULTIPLIER_ADDRESS = "0x172D0bD953566538f050aabFEef5E2E8143e09f4";
 const WTFUEL_ADDRESS = "0x4dc08b15ea0e10b96c41aec22fab934ba15c983e";
+const FACTORY_ADDRESS = "0xcf072d5d8338ee8e6bb573506c8d182389b35599"
 
 export default API_URL;
-export {ABI_TNT721, ABI_TNT20, NETWORK_OPTIONS, ABI_LP_POOL, MULTIPLIER_ADDRESS, WTFUEL_ADDRESS};
+export {ABI_TNT721, ABI_TNT20, NETWORK_OPTIONS, ABI_LP_POOL, ABI_FACTORY, MULTIPLIER_ADDRESS, WTFUEL_ADDRESS, FACTORY_ADDRESS};

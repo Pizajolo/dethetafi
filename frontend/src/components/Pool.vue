@@ -3,9 +3,9 @@
     <template #title>
       <div class="pool-title">
         <div style="display: flex;">
-          <img :src="pool.img" alt="">
+          <img :src="pool.image" alt="">
           <div class="pool-name">
-            <h4>{{pool.name}}</h4>
+            <h4>{{pool.name}}/TBILL-TFuel</h4>
             <p>TVL: ${{tvl}}</p>
             <!--        <p><span>Bid 1 ETH </span>{{Histo.Date}}</p>-->
           </div>
@@ -155,7 +155,7 @@ export default {
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner()
       const contractPoolObject = new ethers.Contract(
-          this.pool.contract,
+          this.pool.contractAddress,
           ABI_LP_POOL,
           signer
       );
@@ -166,7 +166,7 @@ export default {
       let topic = ethers.utils.id("Compound(uint256,uint256)");
 
       let filter = {
-        address: this.pool.contract,
+        address: this.pool.contractAddress,
         topics: [topic]
       }
 
@@ -195,7 +195,7 @@ export default {
           ABI_TNT20,
           signer
       );
-      contractLPObject.approve(this.pool.contract, ethers.BigNumber.from(this.amountToApprove*1000000).mul(1000000000000)).catch((error) => {
+      contractLPObject.approve(this.pool.contractAddress, ethers.BigNumber.from(this.amountToApprove*1000000).mul(1000000000000)).catch((error) => {
         this.loadingApprove = false;
         console.log(error);
       });
@@ -218,7 +218,7 @@ export default {
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner()
       const contractPoolObject = new ethers.Contract(
-          this.pool.contract,
+          this.pool.contractAddress,
           ABI_LP_POOL,
           signer
       );
@@ -230,7 +230,7 @@ export default {
       let topic = ethers.utils.id("Deposit(uint256,address)");
 
       let filter = {
-        address: this.pool.contract,
+        address: this.pool.contractAddress,
         topics: [topic]
       }
 
@@ -248,7 +248,7 @@ export default {
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner()
       const contractPoolObject = new ethers.Contract(
-          this.pool.contract,
+          this.pool.contractAddress,
           ABI_LP_POOL,
           signer
       );
@@ -260,7 +260,7 @@ export default {
       let topic = ethers.utils.id("Withdraw(uint256,address)");
 
       let filter = {
-        address: this.pool.contract,
+        address: this.pool.contractAddress,
         topics: [topic]
       }
 
@@ -285,7 +285,7 @@ export default {
       );
       let LPSupply = await contractLPObject.totalSupply();
       this.valueLPToken = ethers.BigNumber.from(wTFuelBalance).mul(2).div(LPSupply).toNumber()*this.tfuel;
-      this.tvl = Math.round((await contractLPObject.balanceOf(this.pool.contract)).div(ethers.BigNumber.from("10000000000")).toNumber()/1000000 * this.valueLPToken)/100;
+      this.tvl = Math.round((await contractLPObject.balanceOf(this.pool.contractAddress)).div(ethers.BigNumber.from("10000000000")).toNumber()/1000000 * this.valueLPToken)/100;
       if(this.userAccount !== '') {
         this.walletBalanceLP = (await contractLPObject.balanceOf(this.userAccount)).div(ethers.BigNumber.from("1000000000000")).toNumber()/1000000
         this.walletBalance = Math.round(this.walletBalanceLP*this.valueLPToken);
@@ -302,11 +302,11 @@ export default {
           ABI_TNT721,
           provider
       );
-      let balance = await contractNFTObject.balanceOf(this.pool.contract);
+      let balance = await contractNFTObject.balanceOf(this.pool.contractAddress);
       if(balance>0) {
         let promises = [];
         for(let i=0; i<balance;i++) {
-          promises.push(contractNFTObject.tokenOfOwnerByIndex(this.pool.contract, i))
+          promises.push(contractNFTObject.tokenOfOwnerByIndex(this.pool.contractAddress, i))
         }
         let tokenIds = await Promise.all(promises);
         promises = []
@@ -360,7 +360,7 @@ export default {
 
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       const contractPoolObject = new ethers.Contract(
-          this.pool.contract,
+          this.pool.contractAddress,
           ABI_LP_POOL,
           provider
       );
@@ -385,12 +385,12 @@ export default {
           provider
       );
       this.accessName  = await contractNFTObject.name();
-      // let data = await axios.post("https://tbillstats.io/api/getNFTforWallet/",{walletAddress: this.pool.contract});
+      // let data = await axios.post("https://tbillstats.io/api/getNFTforWallet/",{walletAddress: this.pool.contractAddress});
       // console.log(data.data)
     }
   },
   mounted() {
-    this.statsLink = "https://tbillstats.io/MyWallet?wallet="+this.pool.contract;
+    this.statsLink = "https://tbillstats.io/MyWallet?wallet="+this.pool.contractAddress;
     this.getData()
   },
   created() {
