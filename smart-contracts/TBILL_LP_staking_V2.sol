@@ -671,6 +671,11 @@ contract TBillStaking {
         emit MinimumCompoundBalanceSet(_balance);
     }
 
+    function setAccessTokenBalance(uint _amount) onlyAdmin public {
+        require(accessTokenAmount > _amount, "Amount can't be increased");
+        accessTokenAmount = _amount;
+    }
+
     function getTBillBalance() public view returns(uint) {
         return TBill.balanceOf(address(this));
     }
