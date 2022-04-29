@@ -20,9 +20,10 @@
           <a :href="statsLink" target="_blank">tbillstats.io</a>
           <!--        <p><span>Bid 1 ETH </span>{{Histo.Date}}</p>-->
         </div>
-        <button class="compound-btn" @click.stop="compound()" :disabled="loadingCompound">
+        <button class="compound-btn" @click.stop="compound()" :disabled="disabledCompound">
           <h4 v-if="!loadingCompound">Compound</h4>
-          <p v-if="!loadingCompound">{{reward}}TBILL Reward</p>
+          <p v-if="disabledCompound && !loadingCompound">Amount to small</p>
+          <p v-if="!loadingCompound && !disabledCompound">{{reward}}TBILL Reward</p>
           <pulse-loader :loading="loadingCompound" color="#18E5E7"></pulse-loader>
         </button>
       </div>
@@ -128,6 +129,7 @@ export default {
       loadingApprove: false,
       loadingWithdraw:false,
       loadingCompound:false,
+      disabledCompound: true,
       addressLP: '',
       userAccount: '',
       tvl: 0,
@@ -152,6 +154,7 @@ export default {
   methods: {
     async compound() {
       this.loadingCompound = true
+      this.disabledCompound = true
       let provider = new ethers.providers.Web3Provider(window.ethereum);
       let signer = provider.getSigner()
       const contractPoolObject = new ethers.Contract(
@@ -294,9 +297,6 @@ export default {
     },
 
     async getMultiplierData(multiplier, provider) {
-      this.multiplier125 = 0;
-      this.multiplier150 = 0;
-      this.multiplier200 = 0;
       const contractNFTObject = new ethers.Contract(
           multiplier,
           ABI_TNT721,
@@ -333,6 +333,9 @@ export default {
               amount = metadata[i].data.attributes[j].value;
             }
           }
+          this.multiplier125 = 0;
+          this.multiplier150 = 0;
+          this.multiplier200 = 0;
           switch (type) {
             case 25:
               this.multiplier125 += amount;
@@ -344,6 +347,7 @@ export default {
               this.multiplier200 += amount;
               break;
           }
+
         }
       }
     },
@@ -377,6 +381,8 @@ export default {
       this.accessToken  = await contractPoolObject.accessToken();
       this.accessTokenAmount  = await contractPoolObject.accessTokenAmount();
       this.balanceTBILL  = Math.round((ethers.BigNumber.from(await contractPoolObject.getTBillBalance()).div(ethers.BigNumber.from("1000000"))).toNumber()/10)/100;
+      let minCompound  = Math.round((ethers.BigNumber.from(await contractPoolObject.minimumCompoundBalance()).div(ethers.BigNumber.from("1000000"))).toNumber()/10)/100;
+      if(this.balanceTBILL > minCompound) this.disabledCompound = false
       this.reward = Math.round((ethers.BigNumber.from(await contractPoolObject.getCompoundReward()).div(ethers.BigNumber.from("10000000"))).toNumber())/100;
 
       const contractNFTObject = new ethers.Contract(

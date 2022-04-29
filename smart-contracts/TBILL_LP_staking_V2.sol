@@ -605,6 +605,7 @@ contract TBillStaking {
     }
 
     function withdrawMultiplierAdmin(uint _tokenId) public onlyAdmin {
+        require(TokenIdToOwnersAddress[_tokenId] == address(0), "This NFT is owned by a user");
         MultiplierNFT.transferFrom(address(this), msg.sender, _tokenId);
         emit WithdrawMultiplier(_tokenId, msg.sender);
     }
@@ -739,6 +740,17 @@ contract TBILLStakingFactory is Ownable {
         emit CreateContract(address(newContract), msg.sender, name);
     }
 
+    function addTillPool(address _contractAddress, address _creator, string calldata _name, string calldata _image) external onlyOwner {
+        _contractIds.increment();
+        DeployedContractsList[_contractIds.current()] = DeployedContract(
+            _contractAddress,
+            _creator,
+            _name,
+            _image
+        );
+        emit CreateContract(address(_contractAddress), _creator, _name);
+    }
+
     function whitelist(address creator, bool whitelisted) public onlyOwner {
         whitelistedCreators[creator] = whitelisted;
     }
@@ -784,7 +796,7 @@ contract TBILLStakingFactory is Ownable {
         uint256 currentId = 0;
 
         DeployedContract[] memory DeployedContracts = new DeployedContract[](itemCount);
-        for (uint256 i = 1; i <= itemCount; i++) {
+        for (uint256 i = 1; i <= totalItemCount; i++) {
             if(DeployedContractsList[i].creator == creator){
                 DeployedContracts[currentId] = DeployedContractsList[i];
                 currentId += 1;

@@ -432,7 +432,7 @@ contract TBILLStakingFactory is Ownable {
             _name,
             _image
         );
-        emit CreateContract(address(newContract), msg.sender, name);
+        emit CreateContract(address(_contractAddress), _creator, _name);
     }
 
     function whitelist(address creator, bool whitelisted) public onlyOwner {
